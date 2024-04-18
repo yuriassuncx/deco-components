@@ -4,7 +4,7 @@ import type {
   Product,
   ProductLeaf,
 } from "apps/commerce/types.ts";
-import { useOffer } from "../../sdk/useOffer.ts";
+import { useOffer } from "./useOffer.ts";
 
 export type Possibilities = Record<string, Record<string, Sku | undefined>>;
 export type Sku = {

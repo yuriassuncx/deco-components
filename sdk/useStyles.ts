@@ -1,4 +1,4 @@
-import { DynamicStyle } from "deco-sites/simples/common/sdk/styles.ts";
+import { DynamicStyle } from "./styles.ts";
 
 export function applyStyle(
   element: string,
