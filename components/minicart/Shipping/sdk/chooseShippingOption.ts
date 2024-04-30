@@ -103,10 +103,10 @@ export async function chooseShippingOption({
             ? "residential"
             : "search",
         }],
-        logisticsInfo: cart.value?.items.map((_: unknown, index: number) => ({
+        logisticsInfo: slas.map((slaId, index) => ({
           itemIndex: index,
           addressId: address?.addressId,
-          selectedSla: slas[0],
+          selectedSla: slaId,
           selectedDeliveryChannel: deliveryChannel,
         })),
       },

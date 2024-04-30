@@ -1,5 +1,5 @@
 import { computed, Signal, signal } from "@preact/signals";
-import { useCart } from "apps/vtex/hooks/useCart.ts";
+import { state as storeState } from "apps/vtex/hooks/context.ts";
 
 import calculatePickupOptions from "./pickupOptions.ts";
 import calculateCheapestAndFastestDeliveryOptions from "./deliveryOptions.ts";
@@ -42,68 +42,73 @@ const postalCodeSignal = signal<PostalCode | null>(null);
 const errorSignal = signal<string | null>(null);
 const loadingSignal = signal<boolean>(false);
 
-export function useShippingCalculator() {
-  const { cart } = useCart();
+const { cart } = storeState;
 
+const hasSelectedAddressSignal = computed(() => {
   const shippingData = cart.value?.shippingData;
-  const logisticsInfo = shippingData?.logisticsInfo ?? [];
 
-  const hasSelectedAddressSignal = computed(() => (
-    Boolean(shippingData?.address?.postalCode)
-  ));
+  return Boolean(shippingData?.address?.postalCode);
+});
 
-  const pickupOptionsSignal = computed(() => (
-    calculatePickupOptions(logisticsInfo)
-  ));
+const pickupOptionsSignal = computed(() => {
+  const logisticsInfo = cart.value?.shippingData?.logisticsInfo ?? [];
 
-  const deliveryOptionsSignal = computed(() => (
-    calculateCheapestAndFastestDeliveryOptions(logisticsInfo)
-  ));
+  return calculatePickupOptions(logisticsInfo);
+});
 
-  const selectedSlaSignal = computed(() => {
-    const { pickupOptions = [] } = pickupOptionsSignal.value ?? {};
-    const { deliveryOptions = [] } = deliveryOptionsSignal.value ?? {};
+const deliveryOptionsSignal = computed(() => {
+  const logisticsInfo = cart.value?.shippingData?.logisticsInfo ?? [];
 
-    // Returns string, so null coalescing operator does not work
-    const activeDeliveryChannel =
-      localStorage.getItem(LOCAL_STORAGE_ACTIVE_DELIVERY_CHANNEL_KEY) ||
-      SelectedDeliveryChannel.Delivery;
+  return calculateCheapestAndFastestDeliveryOptions(logisticsInfo);
+});
 
-    const activeDeliveryOption =
-      localStorage.getItem(LOCAL_STORAGE_ACTIVE_DELIVERY_OPTION_KEY) ||
-      CHEAPEST_DELIVERY_ID;
+const selectedSlaSignal = computed(() => {
+  const logisticsInfo = cart.value?.shippingData?.logisticsInfo ?? [];
 
-    if (activeDeliveryChannel === SelectedDeliveryChannel.PickupInPoint) {
-      const pickupPointId = logisticsInfo?.find(
-        (d) =>
-          d.selectedDeliveryChannel === SelectedDeliveryChannel.PickupInPoint,
-      )?.selectedSla ?? "";
+  const { pickupOptions = [] } = pickupOptionsSignal.value ?? {};
+  const { deliveryOptions = [] } = deliveryOptionsSignal.value ?? {};
 
-      const pickupPoint = pickupOptions.find((d) => d.__id === pickupPointId);
+  // Returns string, so null coalescing operator does not work
+  const activeDeliveryChannel =
+    localStorage.getItem(LOCAL_STORAGE_ACTIVE_DELIVERY_CHANNEL_KEY) ||
+    SelectedDeliveryChannel.Delivery;
 
-      return pickupPoint ?? null;
-    }
+  const activeDeliveryOption =
+    localStorage.getItem(LOCAL_STORAGE_ACTIVE_DELIVERY_OPTION_KEY) ||
+    CHEAPEST_DELIVERY_ID;
 
-    const [cheapest, fastest] = deliveryOptions;
+  if (activeDeliveryChannel === SelectedDeliveryChannel.PickupInPoint) {
+    const pickupPointId = logisticsInfo?.find(
+      (d) =>
+        d.selectedDeliveryChannel === SelectedDeliveryChannel.PickupInPoint,
+    )?.selectedSla ?? "";
 
-    return activeDeliveryOption === CHEAPEST_DELIVERY_ID
-      ? cheapest ?? null
-      : fastest ?? cheapest ?? null; // Sometimes the cheapest option is also the fastest
-  });
+    const pickupPoint = pickupOptions.find((d) => d.__id === pickupPointId);
 
-  const state: ShippingCalculatorContextState = {
-    // Computed
-    selectedSlaSignal,
-    pickupOptionsSignal,
-    deliveryOptionsSignal,
-    hasSelectedAddress: hasSelectedAddressSignal.value,
+    return pickupPoint ?? null;
+  }
 
-    // Form
-    postalCodeSignal,
-    errorSignal,
-    loadingSignal,
-  };
+  const [cheapest, fastest] = deliveryOptions;
 
+  return activeDeliveryOption === CHEAPEST_DELIVERY_ID
+    ? cheapest ?? null
+    : fastest ?? cheapest ?? null; // Sometimes the cheapest option is also the fastest
+});
+
+const state: ShippingCalculatorContextState = {
+  // Computed
+  selectedSlaSignal,
+  pickupOptionsSignal,
+  deliveryOptionsSignal,
+  hasSelectedAddress: hasSelectedAddressSignal.value,
+
+  // Form
+  postalCodeSignal,
+  errorSignal,
+  loadingSignal,
+};
+
+export function useShippingCalculator() {
   return state;
 }
 

@@ -1,6 +1,6 @@
 import type { Product } from "apps/commerce/types.ts";
-import { SpecificationsDictionary } from "deco-sites/simples/loaders/ArCo/getListOfSpecifications.tsx";
-import { DynamicStyle } from "deco-sites/simples/common/sdk/styles.ts";
+import { SpecificationsDictionary } from "../../../../loaders/ArCo/getListOfSpecifications.tsx";
+import { AnatomyClasses } from "../../../../sdk/styles.ts";
 
 export type { SpecificationsDictionary };
 
@@ -14,7 +14,7 @@ const anatomy = [
   "optionImage",
 ];
 
-export type ColorSelectorStyles = Record<typeof anatomy[number], DynamicStyle>;
+export type ColorSelectorStyles = AnatomyClasses<typeof anatomy[number]>;
 
 export type ColorSelectorConstants = {
   colorKey: string;
@@ -27,7 +27,7 @@ export interface ColorSelectorProps {
   seller: string;
   colorsSpecification: SpecificationsDictionary;
   constants: ColorSelectorConstants;
-  styles?: ColorSelectorStyles;
+  classes?: ColorSelectorStyles;
   showUnavailableProducts?: boolean;
   orderByColorSpecificationPosition?: boolean;
 }

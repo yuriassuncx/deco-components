@@ -1,27 +1,26 @@
 import { ComponentChildren } from "preact";
-import { AnatomyStyles } from "deco-sites/simples/common/sdk/styles.ts";
-
-import useShippingCalculator from "../../sdk/useShippingCalculator.ts";
+import { AnatomyClasses, handleClasses } from "../../../../../sdk/styles.ts";
 import sendPostalCodeAttachment from "../../sdk/getAddressFromPostalCode.ts";
+import useShippingCalculator from "../../sdk/useShippingCalculator.ts";
 
 const anatomy = [
   "container",
 ] as const;
 
-export type ShippingCalculatorFormStyles = AnatomyStyles<
+export type ShippingCalculatorFormStyles = AnatomyClasses<
   typeof anatomy[number]
 >;
 
 export type ShippingCalculatorFormProps = {
   children: ComponentChildren;
   errorMessage?: string;
-  styles?: ShippingCalculatorFormStyles;
+  classes?: ShippingCalculatorFormStyles;
 };
 
 function ShippingCalculatorForm({
   children,
   errorMessage = "CEP inválido",
-  styles,
+  classes,
 }: ShippingCalculatorFormProps) {
   const { postalCodeSignal, errorSignal, loadingSignal } =
     useShippingCalculator();
@@ -42,7 +41,7 @@ function ShippingCalculatorForm({
 
   return (
     <form
-      class={`block p- ${styles?.container?.classes ?? ""}`}
+      class={handleClasses("block", classes?.container)}
       onSubmit={handleSubmit}
     >
       {children}

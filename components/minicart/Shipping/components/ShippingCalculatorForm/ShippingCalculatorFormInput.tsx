@@ -1,15 +1,14 @@
-import { JSX } from "preact";
-import { useEffect } from "preact/hooks";
 import { useCart } from "apps/vtex/hooks/useCart.ts";
+import { JSX } from "preact";
 import { ChangeEvent } from "preact/compat";
-import { AnatomyStyles } from "deco-sites/simples/common/sdk/styles.ts";
-
-import useShippingCalculator from "../../sdk/useShippingCalculator.ts";
-
+import { useEffect } from "preact/hooks";
+import { clx } from "../../../../../sdk/clx.ts";
+import { AnatomyClasses, handleClasses } from "../../../../../sdk/styles.ts";
 import {
   maskPostalCode,
   stripNonNumericCharacters,
 } from "../../sdk/helpers.tsx";
+import useShippingCalculator from "../../sdk/useShippingCalculator.ts";
 
 const anatomy = [
   "container",
@@ -18,18 +17,18 @@ const anatomy = [
   "errorMessage",
 ] as const;
 
-export type ShippingCalculatorFormInputStyles = AnatomyStyles<
+export type ShippingCalculatorFormInputStyles = AnatomyClasses<
   typeof anatomy[number]
 >;
 
 export type ShippingCalculatorFormInputProps =
   & JSX.HTMLAttributes<HTMLInputElement>
   & {
-    styles?: ShippingCalculatorFormInputStyles;
+    classes?: ShippingCalculatorFormInputStyles;
   };
 
 function ShippingCalculatorFormInput({
-  styles,
+  classes,
   ...props
 }: ShippingCalculatorFormInputProps) {
   const { cart } = useCart();
@@ -59,16 +58,14 @@ function ShippingCalculatorFormInput({
   }, []);
 
   return (
-    <div class={`inline-block ${styles?.container?.classes ?? ""}`}>
+    <div class={handleClasses("inline-block", classes?.container)}>
       <input
         {...props}
-        class={`border border-transparent outline-none py-[calc(0.5rem-1px)] px-4 
-          ${styles?.input?.classes ?? ""} 
-          ${
-          Boolean(error) &&
-          `[&&]:border-red-500 ${styles?.["input--error"]?.classes ?? ""}`
-        }
-        `}
+        class={handleClasses(
+          "border border-transparent outline-none py-[calc(0.5rem-1px)] px-4",
+          classes?.input,
+          error ? clx("[&&]:border-red-500", classes?.["input--error"]) : "",
+        )}
         name="postalCode"
         value={maskPostalCode(postalCode)}
         onChange={handleOnChange}
@@ -77,11 +74,12 @@ function ShippingCalculatorFormInput({
         maxLength={9}
       />
 
-      {Boolean(error) && (
+      {!!error && (
         <span
-          class={`block mt-0.5 text-sm text-red-500 ${
-            styles?.errorMessage?.classes ?? ""
-          }`}
+          class={handleClasses(
+            "block mt-0.5 text-sm text-red-500",
+            classes?.errorMessage,
+          )}
         >
           {error}
         </span>

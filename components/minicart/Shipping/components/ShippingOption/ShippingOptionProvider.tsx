@@ -1,7 +1,6 @@
 import { createContext, JSX } from "preact";
 import { useContext } from "preact/hooks";
-import { AnatomyStyles } from "deco-sites/simples/common/sdk/styles.ts";
-
+import { AnatomyClasses, handleClasses } from "../../../../../sdk/styles.ts";
 import { DeliverySla, PickupSla } from "../../sdk/Types.ts";
 import useShippingCalculator from "../../sdk/useShippingCalculator.ts";
 
@@ -27,14 +26,14 @@ const anatomy = ["container", "container--active"] as const;
 export type ShippingOptionProviderProps = {
   option: PickupSla | DeliverySla;
   children: JSX.Element | JSX.Element[];
-  styles?: AnatomyStyles<typeof anatomy[number]>;
+  classes?: AnatomyClasses<typeof anatomy[number]>;
   onClick?: (_option: PickupSla | DeliverySla) => void;
 };
 
 function ShippingOptionProvider({
   option,
   children,
-  styles,
+  classes,
   onClick,
 }: ShippingOptionProviderProps) {
   const { selectedSlaSignal } = useShippingCalculator();
@@ -49,9 +48,10 @@ function ShippingOptionProvider({
   return (
     <ShippingOptionContext.Provider value={option}>
       <div
-        class={`${styles?.container?.classes ?? ""} ${
-          isActive ? styles?.["container--active"]?.classes ?? "" : ""
-        }`}
+        class={handleClasses(
+          classes?.container,
+          isActive ? classes?.["container--active"] : "",
+        )}
         onClick={handleClick}
       >
         {children}

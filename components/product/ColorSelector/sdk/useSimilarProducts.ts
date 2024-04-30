@@ -4,7 +4,7 @@ import { useMemo } from "preact/hooks";
 import type {
   ColorSelectorConstants,
   SpecificationsDictionary,
-} from "../components/product/ColorSelector/Types.ts";
+} from "./Types.ts";
 
 export const COLOR_FALLBACK_IMG = "/image/thumbnail-error.png";
 

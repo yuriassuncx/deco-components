@@ -1,32 +1,31 @@
-import { DynamicStyle } from "deco-sites/simples/common/sdk/styles.ts";
-import { useShippingOption } from "deco-sites/simples/common/components/minicart/Shipping/components/ShippingOption/ShippingOptionProvider.tsx";
-
+import { AnatomyClasses, handleClasses } from "../../../../../sdk/styles.ts";
 import { formatMessage } from "../../sdk/helpers.tsx";
+import { useShippingOption } from "./ShippingOptionProvider.tsx";
 
 const anatomy = [
   "value",
   "friendlyName",
 ] as const;
 
-type ShippingOptionTitleStyle = Record<typeof anatomy[number], DynamicStyle>;
+type ShippingOptionTitleStyle = AnatomyClasses<typeof anatomy[number]>;
 
 export type ShippingOptionTitleProps = {
   message?: string;
-  styles?: ShippingOptionTitleStyle;
+  classes?: ShippingOptionTitleStyle;
 };
 
 function ShippingOptionTitle({
   message = "{{friendlyName}}",
-  styles,
+  classes,
 }: ShippingOptionTitleProps) {
   const option = useShippingOption();
 
   return (
-    <p class={`m-0 ${styles?.value?.classes ?? ""}`}>
+    <p class={handleClasses("m-0", classes?.value)}>
       {formatMessage(message, {
         "{{friendlyName}}": {
           value: option.friendlyName ?? "",
-          classes: styles?.friendlyName?.classes ?? "",
+          classes: classes?.friendlyName ?? "",
         },
       })}
     </p>

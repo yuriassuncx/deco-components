@@ -11,7 +11,7 @@ import { SelectedDeliveryChannel } from "./Types.ts";
 
 type StoreItem = PickupStoreInfo & {
   pickupPointId: string;
-  slas: ShippingSla[];
+  slas: Array<ShippingSla & { itemIndex: number }>;
   items: number[];
   prices: number[];
 };
@@ -25,7 +25,7 @@ function calculatePickupOptions(logisticsInfo: LogisticsInfo[]) {
     )
   );
 
-  // for each item, create an array of stores with the items they deliver
+  // Group the pickup options by pickup point
   pickupSlasForEachItem.forEach((slasForItem, i) => {
     slasForItem.forEach((sla) => {
       const { pickupPointId } = sla;
@@ -37,7 +37,10 @@ function calculatePickupOptions(logisticsInfo: LogisticsInfo[]) {
       stores[pickupPointId] = {
         ...sla.pickupStoreInfo,
         pickupPointId,
-        slas: [...stores?.[pickupPointId]?.slas ?? [], sla],
+        slas: [...stores?.[pickupPointId]?.slas ?? [], {
+          ...sla,
+          itemIndex: i,
+        }],
         items: [...stores?.[pickupPointId]?.items ?? [], i],
         prices: [...stores?.[pickupPointId]?.prices ?? [], sla.price],
       };
@@ -45,7 +48,6 @@ function calculatePickupOptions(logisticsInfo: LogisticsInfo[]) {
   });
 
   // convert the stores object to an array
-  // and add the unavailableItems property
   const pickupOptions = Object.keys(stores).map((key) => {
     const store = stores[key];
     const slowestSla: ShippingSla = getLatestSla(store.slas);
@@ -54,6 +56,11 @@ function calculatePickupOptions(logisticsInfo: LogisticsInfo[]) {
       ...store,
       __id: store.slas[0].id,
       __type: null,
+      // Some items may not have a pickup option, so we need to add nulls to the array
+      slas: logisticsInfo
+        .map(({ itemIndex }) =>
+          store.slas.find((sla) => sla.itemIndex === itemIndex) ?? null
+        ),
       price: computePrice(store.prices),
       shippingEstimate: slowestSla?.shippingEstimate,
       selectedDeliveryChannel: SelectedDeliveryChannel.PickupInPoint,
