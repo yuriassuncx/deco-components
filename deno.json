@@ -15,6 +15,7 @@
   "lock": false,
   "tasks": {
     "start": "deno eval 'import \"deco/scripts/apps/bundle.ts\"'",
+    "release": "deno eval 'import \"deco/scripts/release.ts\"'",
     "check": "deno check **/*.ts"
   },
   "githooks": {
