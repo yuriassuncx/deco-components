@@ -4,6 +4,11 @@ export type AnatomyClasses<T extends string> = {
   [key in T]?: string;
 };
 
+export interface DynamicStyle {
+  classes?: string;
+  inline?: Record<string, string>;
+}
+
 // Concat classes or replace classes if override matches "!{}!"
 export function handleClasses(
   base: string = "",

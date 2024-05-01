@@ -18,7 +18,7 @@ async function sendPostalCodeAttachment(postalCode: string) {
     throw new Error("CEP inválido");
   }
 
-  const address = await invoke["deco-sites/simples"].actions
+  const address = await invoke["deco-components"].actions
     .getAddressFromPostalCode({
       postalCode,
       availableAddresses,

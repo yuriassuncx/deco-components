@@ -2,7 +2,16 @@
 // This file SHOULD be checked into source version control.
 // This file is automatically updated during development when running `dev.ts`.
 
+import * as $$$$$$$$$0 from "./actions/getAddressFromPostalCode.ts";
+import * as $$$0 from "./loaders/ArCo/getListOfSpecifications.tsx";
+
 const manifest = {
+  "loaders": {
+    "deco-components/loaders/ArCo/getListOfSpecifications.tsx": $$$0,
+  },
+  "actions": {
+    "deco-components/actions/getAddressFromPostalCode.ts": $$$$$$$$$0,
+  },
   "name": "deco-components",
   "baseUrl": import.meta.url,
 };
