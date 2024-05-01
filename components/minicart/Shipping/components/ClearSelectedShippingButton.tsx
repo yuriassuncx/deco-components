@@ -1,10 +1,7 @@
 import { ComponentChildren } from "preact";
-import { AnatomyStyles } from "deco-sites/simples/common/sdk/styles.ts";
-import Spinner from "deco-sites/simples/components/ui/Spinner.tsx";
-import Icon, {
-  Props as IconProps,
-} from "deco-sites/simples/components/ui/Icon.tsx";
-
+import { AnatomyClasses, handleClasses } from "../../../../sdk/styles.ts";
+import Icon, { Props as IconProps } from "../../../ui/Icon.tsx";
+import Spinner from "../../../ui/Spinner.tsx";
 import { clearShippingOptions } from "../sdk/chooseShippingOption.ts";
 import { useShippingCalculator } from "../sdk/useShippingCalculator.ts";
 
@@ -12,17 +9,17 @@ const anatomy = [
   "container",
 ] as const;
 
-type Styles = AnatomyStyles<typeof anatomy[number]>;
+type Styles = AnatomyClasses<typeof anatomy[number]>;
 
 export type ClearSelectedShippingButtonProps = {
-  styles?: Styles;
+  classes?: Styles;
   hideIfNoSelectedShipping?: boolean;
   children?: ComponentChildren;
   iconProps?: Partial<IconProps>;
 };
 
 function ClearSelectedShippingButton({
-  styles,
+  classes,
   hideIfNoSelectedShipping = true,
   children,
   iconProps,
@@ -43,7 +40,7 @@ function ClearSelectedShippingButton({
 
   if (loading) {
     return (
-      <div class={`p-2 ${styles?.container?.classes ?? ""}`}>
+      <div class={handleClasses("p-2", classes?.container)}>
         <Spinner size={14} />
       </div>
     );
@@ -51,7 +48,7 @@ function ClearSelectedShippingButton({
 
   return (
     <div
-      class={`cursor-pointer p-2 ${styles?.container?.classes ?? ""}`}
+      class={handleClasses("cursor-pointer p-2", classes?.container)}
       onClick={handleClearShippingOptions}
     >
       {children ?? (

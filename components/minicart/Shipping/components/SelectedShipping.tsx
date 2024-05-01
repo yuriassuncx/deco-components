@@ -1,14 +1,13 @@
 import { useCart } from "apps/vtex/hooks/useCart.ts";
-import { DynamicStyle } from "deco-sites/simples/common/sdk/styles.ts";
-
-import useShippingCalculator from "../sdk/useShippingCalculator.ts";
+import { AnatomyClasses, handleClasses } from "../../../../sdk/styles.ts";
+import { DeliverySla } from "../sdk/Types.ts";
 import {
   calculateShippingEstimateDate,
   formatMessage,
+  maskPostalCode,
   shippingEstimateToString,
 } from "../sdk/helpers.tsx";
-import { maskPostalCode } from "../sdk/helpers.tsx";
-import { DeliverySla } from "../sdk/Types.ts";
+import useShippingCalculator from "../sdk/useShippingCalculator.ts";
 
 const anatomy = [
   "message",
@@ -19,17 +18,16 @@ const anatomy = [
   "pickupOptionName",
 ] as const;
 
-export type EstimateInfoStyle = Record<
-  typeof anatomy[number],
-  DynamicStyle
->;
+export type EstimateInfoAnatomyKeys = typeof anatomy[number];
+
+type EstimateInfoClasses = AnatomyClasses<EstimateInfoAnatomyKeys>;
 
 export type SelectedShippingProps = {
   defaultMessage?: string;
   deliveryMessage?: string;
   pickupMessage?: string;
   deliveryOnTheSameDayMessage?: string;
-  styles?: EstimateInfoStyle;
+  classes?: EstimateInfoClasses;
 };
 
 function SelectedShipping({
@@ -37,7 +35,7 @@ function SelectedShipping({
   deliveryMessage = "Até {{dueDate}} para {{postalCode}}",
   pickupMessage = "Retirar em {{friendlyName}}",
   deliveryOnTheSameDayMessage = "No mesmo dia para {{postalCode}}",
-  styles,
+  classes,
 }: SelectedShippingProps) {
   const { cart } = useCart();
   const { selectedSlaSignal } = useShippingCalculator();
@@ -51,7 +49,7 @@ function SelectedShipping({
     ? formatMessage(pickupMessage, {
       "{{friendlyName}}": {
         value: (selectedSla as DeliverySla)?.friendlyName,
-        classes: styles?.pickupOptionName?.classes ?? "",
+        classes: classes?.pickupOptionName ?? "",
       },
     })
     : null;
@@ -85,17 +83,17 @@ function SelectedShipping({
     return formatMessage(message, {
       "{{dueDate}}": {
         value: dueDate,
-        classes: styles?.dueDate?.classes ?? "",
+        classes: classes?.dueDate ?? "",
       },
 
       "{{estimate}}": {
         value: estimateString,
-        classes: styles?.estimate?.classes ?? "",
+        classes: classes?.estimate ?? "",
       },
 
       "{{postalCode}}": {
         value: maskPostalCode(postalCode),
-        classes: styles?.postalCode?.classes ?? "",
+        classes: classes?.postalCode ?? "",
       },
     });
   })();
@@ -110,11 +108,10 @@ function SelectedShipping({
 
   return (
     <p
-      class={`m-0 ${
-        (selectedSla
-          ? styles?.defaultMessage?.classes
-          : styles?.message?.classes) ?? ""
-      }`}
+      class={handleClasses(
+        "m-0",
+        selectedSla ? classes?.defaultMessage : classes?.message,
+      )}
     >
       {selectedSla ? renderValue() : defaultMessage}
     </p>

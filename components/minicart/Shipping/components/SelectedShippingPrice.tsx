@@ -1,6 +1,5 @@
-import { formatPrice } from "deco-sites/simples/common/sdk/format.ts";
-import { DynamicStyle } from "deco-sites/simples/common/sdk/styles.ts";
-
+import { formatPrice } from "../../../../sdk/format.ts";
+import { AnatomyClasses, handleClasses } from "../../../../sdk/styles.ts";
 import useShippingCalculator from "../sdk/useShippingCalculator.ts";
 
 const anatomy = [
@@ -9,18 +8,18 @@ const anatomy = [
   "freeMessage",
 ] as const;
 
-type SelectedShippingPriceStyle = Record<typeof anatomy[number], DynamicStyle>;
+type SelectedShippingPriceStyle = AnatomyClasses<typeof anatomy[number]>;
 
 export type SelectedShippingPriceProps = {
   defaultMessage?: string;
   freeMessage?: string;
-  styles?: SelectedShippingPriceStyle;
+  classes?: SelectedShippingPriceStyle;
 };
 
 function SelectedShippingPrice({
   freeMessage = "Grátis",
   defaultMessage = "Inserir CEP",
-  styles,
+  classes,
 }: SelectedShippingPriceProps) {
   const { selectedSlaSignal } = useShippingCalculator();
 
@@ -29,7 +28,7 @@ function SelectedShippingPrice({
   function getFormattedPrice(price: number) {
     if (price === 0) {
       return (
-        <span class={styles?.freeMessage?.classes ?? ""}>
+        <span class={classes?.freeMessage ?? ""}>
           {freeMessage}
         </span>
       );
@@ -40,11 +39,10 @@ function SelectedShippingPrice({
 
   return (
     <p
-      class={`m-0 ${
-        (selectedSla
-          ? styles?.message?.classes
-          : styles?.defaultMessage?.classes) ?? ""
-      }`}
+      class={handleClasses(
+        "m-0",
+        selectedSla ? classes?.message : classes?.defaultMessage,
+      )}
     >
       {selectedSla ? getFormattedPrice(selectedSla.price) : defaultMessage}
     </p>

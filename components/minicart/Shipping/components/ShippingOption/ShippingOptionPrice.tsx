@@ -1,6 +1,5 @@
-import { formatPrice } from "deco-sites/simples/common/sdk/format.ts";
-import { DynamicStyle } from "deco-sites/simples/common/sdk/styles.ts";
-
+import { formatPrice } from "../../../../../sdk/format.ts";
+import { AnatomyClasses, handleClasses } from "../../../../../sdk/styles.ts";
 import { useShippingOption } from "./ShippingOptionProvider.tsx";
 
 const anatomy = [
@@ -8,23 +7,23 @@ const anatomy = [
   "freeValue",
 ] as const;
 
-type ShippingOptionPriceStyle = Record<typeof anatomy[number], DynamicStyle>;
+type ShippingOptionPriceStyle = AnatomyClasses<typeof anatomy[number]>;
 
 export type ShippingOptionPriceProps = {
   freeMessage?: string;
-  styles?: ShippingOptionPriceStyle;
+  classes?: ShippingOptionPriceStyle;
 };
 
 function ShippingOptionPrice({
   freeMessage = "Grátis",
-  styles,
+  classes,
 }: ShippingOptionPriceProps) {
   const option = useShippingOption();
 
   return (
-    <p class={`m-0 ${styles?.value?.classes ?? ""}`}>
+    <p class={handleClasses("m-0", classes?.value)}>
       {formatPrice(option.price) ?? (
-        <span class={styles?.freeValue?.classes}>
+        <span class={classes?.freeValue ?? ""}>
           {freeMessage}
         </span>
       )}

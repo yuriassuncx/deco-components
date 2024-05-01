@@ -1,11 +1,12 @@
 import type { Product } from "apps/commerce/types.ts";
-import { usePDP } from "../../../sdk/usePDP.ts";
 import { useEffect, useMemo } from "preact/hooks";
-import { ColorSelectorProps } from "./Types.ts";
+import { handleClasses } from "../../../../sdk/styles.ts";
+import { usePDP } from "../../../../sdk/usePDP.ts";
+import { mapProductToSku } from "../../../../sdk/useVariantPossibilitiesClientSide.ts";
+import { ColorSelectorProps } from "../sdk/Types.ts";
 import useSimilarProducts, {
   COLOR_FALLBACK_IMG,
-} from "deco-sites/simples/common/sdk/useSimilarProducts.ts";
-import { mapProductToSku } from "deco-sites/simples/common/sdk/useVariantPossibilitiesClientSide.ts";
+} from "../sdk/useSimilarProducts.ts";
 
 export type Props = ColorSelectorProps;
 
@@ -13,7 +14,7 @@ function ColorSelector(
   {
     product,
     seller,
-    styles,
+    classes,
     constants,
     colorsSpecification,
     showUnavailableProducts,
@@ -65,10 +66,7 @@ function ColorSelector(
   }
 
   return (
-    <ul
-      class={`flex gap-1 items-center ${styles?.container?.classes ?? ""}`}
-      style={styles?.container?.inline}
-    >
+    <ul class={handleClasses("flex gap-1 items-center", classes?.container)}>
       {similarProducts.map((similar) => {
         const { specificColor, colorImg, isAvailable } = similar;
 
@@ -83,10 +81,11 @@ function ColorSelector(
           <li>
             <a
               href={similar.url}
-              class={`flex justify-center items-center cursor-pointer tooltip tooltip-primary transition-colors ease-in-out duration-125 ${
-                styles?.option?.classes ?? ""
-              } ${(isActive ? styles?.optionActive?.classes : "") ?? ""}`}
-              style={styles?.option?.inline}
+              class={handleClasses(
+                "flex justify-center items-center cursor-pointer tooltip tooltip-primary transition-colors ease-in-out duration-125",
+                classes?.option,
+                isActive && classes?.optionActive,
+              )}
               data-tip={specificColor}
               onClick={(e) => {
                 e.preventDefault();
@@ -94,8 +93,7 @@ function ColorSelector(
               }}
             >
               <img
-                class={styles?.optionImage?.classes ?? ""}
-                style={styles?.optionImage?.inline}
+                class={classes?.optionImage ?? ""}
                 src={colorImg ?? COLOR_FALLBACK_IMG} // Won't happen but just in case
                 loading="lazy"
                 alt={specificColor}

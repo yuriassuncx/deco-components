@@ -1,4 +1,4 @@
-import { SpecificationsDictionary } from "deco-sites/simples/loaders/ArCo/getListOfSpecifications.tsx";
+import { SpecificationsDictionary } from "../loaders/ArCo/getListOfSpecifications.tsx";
 
 export interface BusinessRules {
   listOfColors?: SpecificationsDictionary;

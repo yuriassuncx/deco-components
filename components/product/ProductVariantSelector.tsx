@@ -1,11 +1,11 @@
-import Avatar from "deco-sites/simples/components/ui/Avatar.tsx";
 import type { Product } from "apps/commerce/types.ts";
-import { relative } from "deco-sites/simples/sdk/url.ts";
+import { SpecificationsDictionary } from "../../loaders/ArCo/getListOfSpecifications.tsx";
+import { relative } from "../../sdk/url.ts";
+import { usePDP } from "../../sdk/usePDP.ts";
 import {
   useVariantPossibilities,
-} from "deco-sites/simples/common/sdk/useVariantPossibilitiesClientSide.ts";
-import { usePDP } from "deco-sites/simples/common/sdk/usePDP.ts";
-import { SpecificationsDictionary } from "deco-sites/simples/loaders/ArCo/getListOfSpecifications.tsx";
+} from "../../sdk/useVariantPossibilitiesClientSide.ts";
+import Avatar from "../ui/Avatar.tsx";
 
 export interface Props {
   product: Product;

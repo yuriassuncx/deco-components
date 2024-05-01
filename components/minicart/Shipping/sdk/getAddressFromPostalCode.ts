@@ -1,7 +1,7 @@
-import { invoke } from "deco-sites/simples/runtime.ts";
 import { useCart } from "apps/vtex/hooks/useCart.ts";
 import { OrderFormItem } from "apps/vtex/utils/types.ts";
-
+import { invoke } from "../../../../runtime.ts";
+import { SelectedDeliveryChannel } from "./Types.ts";
 import {
   CHEAPEST_DELIVERY_ID,
   LOCAL_STORAGE_ACTIVE_DELIVERY_CHANNEL_KEY,
@@ -9,8 +9,6 @@ import {
   LOCAL_STORAGE_ADDITIONAL_SHIPPING_DATA_KEY,
   LOCAL_STORAGE_ADDITIONAL_SHIPPING_DATA_VALUE,
 } from "./constants.ts";
-
-import { SelectedDeliveryChannel } from "./Types.ts";
 
 async function sendPostalCodeAttachment(postalCode: string) {
   const { cart, sendAttachment } = useCart();
@@ -20,7 +18,7 @@ async function sendPostalCodeAttachment(postalCode: string) {
     throw new Error("CEP inválido");
   }
 
-  const address = await invoke["deco-sites/simples"].actions
+  const address = await invoke["deco-components"].actions
     .getAddressFromPostalCode({
       postalCode,
       availableAddresses,

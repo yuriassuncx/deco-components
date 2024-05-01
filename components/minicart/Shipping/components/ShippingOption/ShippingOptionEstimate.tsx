@@ -1,9 +1,9 @@
+import { AnatomyClasses, handleClasses } from "../../../../../sdk/styles.ts";
 import {
   calculateShippingEstimateDate,
   formatMessage,
   shippingEstimateToString,
 } from "../../sdk/helpers.tsx";
-import { AnatomyStyles } from "deco-sites/simples/common/sdk/styles.ts";
 
 import { useShippingOption } from "./ShippingOptionProvider.tsx";
 
@@ -13,18 +13,18 @@ const anatomy = [
   "estimate",
 ] as const;
 
-export type EstimateInfoStyle = AnatomyStyles<typeof anatomy[number]>;
+export type EstimateInfoStyle = AnatomyClasses<typeof anatomy[number]>;
 
 export type ShippingOptionEstimateProps = {
   message?: string;
   sameDayEstimateMessage?: string;
-  styles?: EstimateInfoStyle;
+  classes?: EstimateInfoStyle;
 };
 
 function ShippingOptionEstimate({
   message: messageProp = "Até {{dueDate}}",
   sameDayEstimateMessage = "No mesmo dia",
-  styles,
+  classes,
 }: ShippingOptionEstimateProps) {
   const option = useShippingOption();
 
@@ -51,17 +51,17 @@ function ShippingOptionEstimate({
     return formatMessage(message, {
       "{{dueDate}}": {
         value: dueDate,
-        classes: styles?.dueDate?.classes ?? "",
+        classes: classes?.dueDate ?? "",
       },
       "{{estimate}}": {
         value: estimateString,
-        classes: styles?.estimate?.classes ?? "",
+        classes: classes?.estimate ?? "",
       },
     });
   }
 
   return (
-    <p class={`m-0 ${styles?.value?.classes ?? ""}`}>
+    <p class={handleClasses("m-0", classes?.value)}>
       {renderMessage()}
     </p>
   );
