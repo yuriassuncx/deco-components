@@ -1,18 +1,17 @@
 import type { Product } from "apps/commerce/types.ts";
-import { useEffect, useMemo } from "preact/hooks";
+import { useMemo } from "preact/hooks";
 import { handleClasses } from "../../../../sdk/styles.ts";
-import { usePDP } from "../../../../sdk/usePDP.ts";
 import { mapProductToSku } from "../../../../sdk/useVariantPossibilitiesClientSide.ts";
 import { ColorSelectorProps } from "../sdk/Types.ts";
 import useSimilarProducts, {
   COLOR_FALLBACK_IMG,
 } from "../sdk/useSimilarProducts.ts";
+import { useProduct } from "../../ProductContext.tsx";
 
 export type Props = ColorSelectorProps;
 
 function ColorSelector(
   {
-    product,
     seller,
     classes,
     constants,
@@ -21,7 +20,10 @@ function ColorSelector(
     orderByColorSpecificationPosition = true,
   }: Props,
 ) {
-  const { productSelected, skuSelected } = usePDP();
+  const { productSignal, skuSelectedSignal } = useProduct();
+
+  const product = productSignal.value;
+  const skuSelected = skuSelectedSignal.value;
 
   const unorderedSimilarProducts = useSimilarProducts({
     product,
@@ -50,16 +52,11 @@ function ColorSelector(
   }, [unorderedSimilarProducts]);
 
   function onSelectProduct(product: Product) {
-    productSelected.value = product;
+    productSignal.value = product;
     const obj = { Title: product?.name!, Url: product?.url };
     history.pushState(obj, obj.Title, obj.Url);
-    skuSelected.value = mapProductToSku(product);
+    skuSelectedSignal.value = mapProductToSku(product);
   }
-
-  useEffect(() => {
-    productSelected.value = product;
-    skuSelected.value = mapProductToSku(product);
-  }, []);
 
   if (similarProducts.length === 0) {
     return null;
@@ -71,7 +68,7 @@ function ColorSelector(
         const { specificColor, colorImg, isAvailable } = similar;
 
         const isActive =
-          similar.productID === productSelected?.value?.productID;
+          similar.productID === product?.productID;
 
         if (!showUnavailableProducts && !isAvailable) {
           return null;
