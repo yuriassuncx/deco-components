@@ -40,7 +40,7 @@ function ClearSelectedShippingButton({
 
   if (loading) {
     return (
-      <div class={handleClasses("p-2", classes?.container)}>
+      <div class={handleClasses("", classes?.container)}>
         <Spinner size={14} />
       </div>
     );
@@ -48,7 +48,7 @@ function ClearSelectedShippingButton({
 
   return (
     <div
-      class={handleClasses("cursor-pointer p-2", classes?.container)}
+      class={handleClasses("cursor-pointer", classes?.container)}
       onClick={handleClearShippingOptions}
     >
       {children ?? (
