@@ -24,6 +24,7 @@ function ColorSelector(
 
   const product = productSignal.value;
   const skuSelected = skuSelectedSignal.value;
+  // console.log(product, product.isSimilarTo)
 
   const unorderedSimilarProducts = useSimilarProducts({
     product,
