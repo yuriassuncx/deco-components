@@ -48,7 +48,7 @@ function ClearSelectedShippingButton({
 
   return (
     <div
-      class={handleClasses("cursor-pointer", classes?.container)}
+      class={handleClasses("cursor-pointer ", classes?.container)}
       onClick={handleClearShippingOptions}
     >
       {children ?? (
