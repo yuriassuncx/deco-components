@@ -1,56 +1,43 @@
 import type { Product } from "apps/commerce/types.ts";
-import { useMemo } from "preact/hooks";
 import { handleClasses } from "../../../../sdk/styles.ts";
 import { mapProductToSku } from "../../../../sdk/useVariantPossibilitiesClientSide.ts";
-import { ColorSelectorProps } from "../sdk/Types.ts";
-import useSimilarProducts, {
+import {
   COLOR_FALLBACK_IMG,
+  ProductWithColorProperties,
 } from "../sdk/useSimilarProducts.ts";
 import { useProduct } from "../../ProductContext.tsx";
 
-export type Props = ColorSelectorProps;
+import { AnatomyClasses } from "../../../../sdk/styles.ts";
+
+const anatomy = [
+  "container",
+  "optionsContainer",
+  "optionAnchor",
+  "option",
+  "optionHover",
+  "optionActive",
+  "optionImage",
+];
+
+export type ColorSelectorStyles = AnatomyClasses<typeof anatomy[number]>;
+
+export interface Props {
+  options?: ProductWithColorProperties[];
+  classes?: ColorSelectorStyles;
+}
 
 function ColorSelector(
   {
-    seller,
     classes,
-    constants,
-    colorsSpecification,
-    showUnavailableProducts,
-    orderByColorSpecificationPosition = true,
+    options = [],
   }: Props,
 ) {
   const { productSignal, skuSelectedSignal } = useProduct();
-
   const product = productSignal.value;
-  const skuSelected = skuSelectedSignal.value;
-  // console.log(product, product.isSimilarTo)
 
-  const unorderedSimilarProducts = useSimilarProducts({
-    product,
-    seller,
-    constants,
-    colorsSpecification,
-  });
-
-  const similarProducts = useMemo(() => {
-    if (!orderByColorSpecificationPosition) {
-      return unorderedSimilarProducts;
-    }
-
-    return unorderedSimilarProducts.sort(
-      (
-        { productID: currentId, position: currentPosition },
-        { productID: nextId, position: nextPosition },
-      ) => {
-        // Order by position first, then by productID
-        if (currentPosition > nextPosition) return 1;
-        if (currentPosition < nextPosition) return -1;
-
-        return Number(currentId) - Number(nextId);
-      },
-    );
-  }, [unorderedSimilarProducts]);
+  if (options.length === 0) {
+    return null;
+  }
 
   function onSelectProduct(product: Product) {
     productSignal.value = product;
@@ -59,21 +46,13 @@ function ColorSelector(
     skuSelectedSignal.value = mapProductToSku(product);
   }
 
-  if (similarProducts.length === 0) {
-    return null;
-  }
-
   return (
     <ul class={handleClasses("flex gap-1 items-center", classes?.container)}>
-      {similarProducts.map((similar) => {
-        const { specificColor, colorImg, isAvailable } = similar;
+      {options.map((similar) => {
+        const { specificColor, thumbnail } = similar;
 
         const isActive =
           similar.productID === product?.productID;
-
-        if (!showUnavailableProducts && !isAvailable) {
-          return null;
-        }
 
         return (
           <li>
@@ -92,7 +71,7 @@ function ColorSelector(
             >
               <img
                 class={classes?.optionImage ?? ""}
-                src={colorImg ?? COLOR_FALLBACK_IMG} // Won't happen but just in case
+                src={thumbnail ?? COLOR_FALLBACK_IMG} // Won't happen but just in case
                 loading="lazy"
                 alt={specificColor}
               />

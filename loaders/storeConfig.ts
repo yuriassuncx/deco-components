@@ -51,11 +51,15 @@ export interface Specification {
   values: Record<string, NativeSpecificationValue>;
 };
 
-export interface StoreConfig {
+export interface BaseStoreConfig<S extends string = string, C extends string = string> {
   accountName: string;
   storeURL: string;
-  specifications?: Record<string, Specification>;
-  constants?: Record<string, string>;
+  specifications?: {
+    [key in S]: Specification;
+  }
+  constants?: {
+    [key in C]: string;
+  }
 }
 
 /** @title {{key}} - {{value}} */
@@ -82,7 +86,7 @@ async function storeConfig(
     storeURL 
   }: Props,
   _req: Request,
-): Promise<StoreConfig> {
+): Promise<BaseStoreConfig> {
   try {
     const constants = constantsList?.reduce((acc, { key, value }) => {
       acc[key] = value;
