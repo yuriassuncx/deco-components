@@ -1,13 +1,11 @@
 import type { Product } from "apps/commerce/types.ts";
-import { handleClasses } from "../../../../sdk/styles.ts";
-import { mapProductToSku } from "../../../../sdk/useVariantPossibilitiesClientSide.ts";
-import {
-  COLOR_FALLBACK_IMG,
-  ProductWithColorProperties,
-} from "../sdk/useSimilarProducts.ts";
-import { useProduct } from "../../ProductContext.tsx";
+import type { AnatomyClasses } from "deco-components/sdk/styles.ts";
+import { handleClasses } from "deco-components/sdk/styles.ts";
+import { mapProductToSku } from "deco-components/sdk/useVariantPossibilitiesClientSide.ts";
+import { useProduct } from "deco-components/sdk/useProduct.ts";
 
-import { AnatomyClasses } from "../../../../sdk/styles.ts";
+import { COLOR_FALLBACK_IMG } from "../../../sdk/getSimilarProducts.ts";
+import type { ProductWithColorProperties } from "./Types.ts";
 
 const anatomy = [
   "container",

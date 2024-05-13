@@ -1,7 +1,8 @@
 import type { Product } from "apps/commerce/types.ts";
+import { useProduct } from "deco-components/sdk/useProduct.ts";
+
 import { SpecificationsDictionary } from "../../loaders/ArCo/getListOfSpecifications.tsx";
 import { relative } from "../../sdk/url.ts";
-import { useProduct } from "./ProductContext.tsx";
 import {
   useVariantPossibilities,
 } from "../../sdk/useVariantPossibilities.ts";
@@ -35,19 +36,19 @@ function VariantSelector({
   const { productSignal, skuSelectedSignal } = useProduct();
 
   const product = productSignal.value;
-  const skuSelected = skuSelectedSignal.value;
+  const sku = skuSelectedSignal.value;
 
   const { url, isVariantOf } = product;
 
   const hasVariant = isVariantOf?.hasVariant ?? [];
   const possibilities = useVariantPossibilities(hasVariant, product);
 
-  function handleVariationSelect(e: Event, sku: Product) {
-    e.preventDefault();
-    skuSelectedSignal.value = sku;
-    const obj = { Title: sku.name, Url: sku.url };
-    history.pushState(obj, obj.Title, obj.Url);
-  }
+  // function handleVariationSelect(e: Event, sku: Product) {
+  //   e.preventDefault();
+  //   skuSelectedSignal.value = sku;
+  //   const obj = { Title: sku.name ?? "", Url: sku.url };
+  //   history.pushState(obj, obj.Title, obj.Url);
+  // }
 
   // console.log({
   //   possibilities,
@@ -63,21 +64,15 @@ function VariantSelector({
           </span>
 
           <ul class={handleClasses("flex flex-row", classes?.variationOptionsList)}>
-            {Object.entries(possibilities[name]).map(([value, sku]) => {
-              const relativeUrl = relative(skuSelectedSignal.value?.url ?? url);
-              const relativeLink = relative(sku?.url);
+            {Object.entries(possibilities[name]).map(([value, skuVal]) => {
+              const relativeUrl = relative(sku?.url ?? url);
+              const relativeLink = relative(sku?.url ?? url);
 
               return (
                 <li class={classes?.variationOptionListItem}>
                   <a
                     class={classes?.variationOptionLink}
                     href={relativeLink}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      skuSelectedSignal.value = sku ?? null;
-                      const obj = { Title: sku?.name!, Url: sku?.url };
-                      history.pushState(obj, obj.Title, obj.Url);
-                    }}
                   >
                     <Avatar
                       content={value}

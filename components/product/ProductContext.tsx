@@ -1,7 +1,6 @@
 // ISLAND
 import { useSignal, Signal } from "@preact/signals";
 import { createContext, ComponentChildren } from 'preact'
-import { useContext } from 'preact/hooks'
 import { Product } from "apps/commerce/types.ts";
 import { Sku } from "../../sdk/useVariantPossibilitiesClientSide.ts";
 
@@ -10,17 +9,7 @@ export type ProductContextState = {
   skuSelectedSignal: Signal<Sku | null>;
 }
 
-const ProductContext = createContext<ProductContextState>({} as never)
-
-export function useProduct() {
-  const context = useContext(ProductContext);
-
-  if (!context) {
-    throw new Error('useProduct must be used within a ProductProvider');
-  }
-
-  return context;
-}
+export const ProductContext = createContext<ProductContextState>({} as never)
 
 export type ProductContextProps = {
   product: Product;
