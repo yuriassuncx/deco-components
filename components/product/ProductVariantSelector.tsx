@@ -6,7 +6,6 @@ import {
   useVariantPossibilities,
 } from "../../sdk/useVariantPossibilitiesClientSide.ts";
 import Avatar from "../ui/Avatar.tsx";
-import type { Product } from "apps/commerce/types.ts";
 import { AnatomyClasses, handleClasses } from "../../sdk/styles.ts";
 
 const anatomy = [
